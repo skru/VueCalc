@@ -2,6 +2,8 @@
 
 ## Project setup
 ```
+download the project and navigate to its location via command line
+...
 npm install
 ```
 
