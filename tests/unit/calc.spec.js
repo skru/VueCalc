@@ -1,6 +1,8 @@
 import { shallowMount, mount } from '@vue/test-utils'
 import Calc from '@/components/Calc.vue'
 
+
+
 const wrapper = mount(Calc);
 const button0 = wrapper.find('.btn-0');
 const button1 = wrapper.find('.btn-1');
@@ -31,149 +33,366 @@ const buttonPI = wrapper.find('.btn-pi')
 const output = wrapper.find('.output-text')
 const history = wrapper.find('.history')
 
+
 describe('Calc.vue', () => {
 
-  it('check simple addition', async () => {
-    await button1.trigger('click')
-    await buttonAdd.trigger('click')
-    await button2.trigger('click')
-    await buttonEquals.trigger('click')
-    expect(output.text()).toMatch('3')
-  })
-  it('check clear', async () => {
-    await buttonClear.trigger('click')
-    expect(output.text()).toMatch('2')
-    await buttonClear.trigger('click')
-    expect(output.text()).toMatch('0')
-  })
-  it('check simple subtraction', async () => {
-    await button2.trigger('click')
-    await buttonSubtract.trigger('click')
-    await button1.trigger('click')
-    await buttonEquals.trigger('click')
-    expect(output.text()).toMatch('1')
-  })
-  it('check all clear', async () => {
-    await buttonAllClear.trigger('click')
-    expect(output.text()).toMatch('0')
-  })
-  it('check simple decimal multiplication', async () => {
-    await buttonAllClear.trigger('click')
-    await button2.trigger('click')
-    await buttonMultiply.trigger('click')
-    await button2.trigger('click')
-    await buttonDecimal.trigger('click')
-    await button5.trigger('click')
-    await buttonEquals.trigger('click')
-    expect(output.text()).toMatch('5')
-  })
-  it('check simple decimal division', async () => {
-    await buttonAllClear.trigger('click')
-    await button1.trigger('click')
-    await buttonDivide.trigger('click')
-    await button3.trigger('click')
-    await buttonEquals.trigger('click')
-    expect(output.text()).toMatch('0.33')
-  })
-  it('check stacked equation', async () => {
-    await buttonAllClear.trigger('click')
-    await button1.trigger('click')
-    await buttonAdd.trigger('click')
-    await button2.trigger('click')
-    await buttonMultiply.trigger('click')
-    await button0.trigger('click')
-    await buttonDecimal.trigger('click')
-    await button5.trigger('click')
-    await buttonEquals.trigger('click')
-    expect(output.text()).toMatch('1.5')
-  })
-  it('check squaring', async () => {
-    await buttonAllClear.trigger('click')
-    await button5.trigger('click')
-    await buttonSquare.trigger('click')
-    expect(output.text()).toMatch('2.24')
-  })
-  it('check divide by pi', async () => {
-    await buttonAllClear.trigger('click')
-    await button1.trigger('click')
-    await button0.trigger('click')
-    await buttonDivide.trigger('click')
-    await buttonPI.trigger('click')
-    await buttonEquals.trigger('click')
-    expect(output.text()).toMatch('3.18')
-  })
-  it('check multiply by pi', async () => {
-    await buttonAllClear.trigger('click')
-    await buttonPI.trigger('click')
-    await buttonMultiply.trigger('click')
-    await button2.trigger('click')
-    await buttonEquals.trigger('click')
-    expect(output.text()).toMatch('6.28')
-  })
-  it('check input formatting', async () => {
-    await buttonAllClear.trigger('click')
-    await button0.trigger('click')
-    await button1.trigger('click')
-    await button2.trigger('click')
-    await button3.trigger('click')
-    await button4.trigger('click')
-    await button5.trigger('click')
-    await button6.trigger('click')
-    await button7.trigger('click')
-    await button8.trigger('click')
-    await button9.trigger('click')
-    await button1.trigger('click')
-    expect(output.text()).toMatch('E')
-    await button1.trigger('click')
-    await button2.trigger('click')
-    await button3.trigger('click')
-    await button4.trigger('click')
-    await button5.trigger('click')
-    await button6.trigger('click')
-    await button7.trigger('click')
-    await button8.trigger('click')
-    await button9.trigger('click')
-    await buttonDecimal.trigger('click')
-    await button0.trigger('click')
-    await button1.trigger('click')
-    await button2.trigger('click')
-    expect(output.text()).toMatch('123456789.01')
-  })
-  it('check output formatting', async () => {
-    await buttonAllClear.trigger('click')
-    await button9.trigger('click')
-    await button9.trigger('click')
-    await button9.trigger('click')
-    await button9.trigger('click')
-    await button9.trigger('click')
-    await button9.trigger('click')
-    await button9.trigger('click')
-    await button9.trigger('click')
-    await button9.trigger('click')
-    await buttonAdd.trigger('click')
-    await button1.trigger('click')
-    await buttonEquals.trigger('click')
-    expect(output.text()).toMatch('E')
-  })
-  it('check negative/positive', async () => {
-    await buttonAllClear.trigger('click')
-    await button2.trigger('click')
-    await buttonNegative.trigger('click')
-    expect(output.text()).toMatch('-2')
-    await buttonMultiply.trigger('click')
-    await button2.trigger('click')
-    await buttonEquals.trigger('click')
-    expect(output.text()).toMatch('-4')
-  })
-  it('check simple addition on stacked equation', async () => {
-    await buttonAllClear.trigger('click')
-    await button1.trigger('click')
-    await buttonAdd.trigger('click')
-    await button2.trigger('click')
-    await buttonEquals.trigger('click')
-    await buttonNegative.trigger('click')
-    expect(output.text()).toMatch('-3')
+  beforeEach(() => {
+    console.log("clear")
+    wrapper.vm.clearAll()
   })
 
+  
+  it('continous addition', async () => {
+    const v = wrapper.vm
+    v.numerical("8")
+    v.addOperand("+")
+    v.numerical("8")
+    v.addOperand("+")
+    v.numerical("8")
+    v.addOperand("+")
+    v.numerical("8")
+    v.addOperand("+")
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("32")
+    })
+  })
+
+  it('continous decimal addition', async () => {
+    const v = wrapper.vm
+    v.numerical("2.5")
+    v.addOperand("+")
+    v.numerical("2.5")
+    v.addOperand("+")
+    v.numerical("2.5")
+    v.addOperand("+")
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("7.5")
+    })
+  })
+
+  it('continous subtraction', async () => {
+    const v = wrapper.vm
+    v.numerical("8")
+    v.addOperand("-")
+    v.numerical("8")
+    v.addOperand("-")
+    v.numerical("8")
+    v.addOperand("-")
+    v.numerical("8")
+    v.addOperand("-")
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("-16")
+    })
+  })
+
+  it('continous decimal subtraction', async () => {
+    const v = wrapper.vm
+    v.numerical("2.5")
+    v.addOperand("-")
+    v.numerical("2.5")
+    v.addOperand("-")
+    v.numerical("2.5")
+    v.addOperand("-")
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("-2.5")
+    })
+  })
+
+  it('continous multiply', async () => {
+    const v = wrapper.vm
+    v.numerical("8")
+    v.addOperand("*")
+    v.numerical("8")
+    v.addOperand("*")
+    v.numerical("8")
+    v.addOperand("*")
+    v.numerical("8")
+    v.addOperand("*")
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("4096")
+    })
+  })
+
+  it('continous decimal multiply', async () => {
+    const v = wrapper.vm
+    v.numerical("2.5")
+    v.addOperand("*")
+    v.numerical("2.5")
+    v.addOperand("*")
+    v.numerical("2.5")
+    v.addOperand("*")
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("15.625")
+    })
+  })
+
+  it('continous division', async () => {
+    const v = wrapper.vm
+    v.numerical("8")
+    v.addOperand("/")
+    v.numerical("8")
+    v.addOperand("/")
+    v.numerical("8")
+    v.addOperand("/")
+    v.numerical("8")
+    v.addOperand("/")
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("0.015625")
+    })
+  })
+
+  it('continous decimal division', async () => {
+    const v = wrapper.vm
+    v.numerical("2.5")
+    v.addOperand("/")
+    v.numerical("2.5")
+    v.addOperand("/")
+    v.numerical("2.5")
+    v.addOperand("/")
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("0.4")
+    })
+  })
+
+  it('stepped addition', async () => {
+    const v = wrapper.vm
+    v.numerical("8")
+    v.addOperand("+")
+    v.numerical("4")
+    v.equals()
+    v.numerical("8")
+    v.addOperand("+")
+    v.numerical("4")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("12")
+    })
+  })
+
+  it('stepped decimal addition', async () => {
+    const v = wrapper.vm
+    v.numerical("2.5")
+    v.addOperand("+")
+    v.numerical("2.2")
+    v.equals()
+    v.numerical("2.5")
+    v.addOperand("+")
+    v.numerical("2.2")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("4.7")
+    })
+  })
+
+  it('stepped subtraction', async () => {
+    const v = wrapper.vm
+    v.numerical("8")
+    v.addOperand("-")
+    v.numerical("4")
+    v.equals()
+    v.numerical("8")
+    v.addOperand("-")
+    v.numerical("4")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("4")
+    })
+  })
+
+  it('stepped division subtraction', async () => {
+    const v = wrapper.vm
+    v.numerical("2.5")
+    v.addOperand("-")
+    v.numerical("2.2")
+    v.equals()
+    v.numerical("2.5")
+    v.addOperand("-")
+    v.numerical("2.2")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("0.3")
+    })
+  })
+
+  it('stepped multiply', async () => {
+    const v = wrapper.vm
+    v.numerical("8")
+    v.addOperand("*")
+    v.numerical("4")
+    v.equals()
+    v.numerical("8")
+    v.addOperand("*")
+    v.numerical("4")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("32")
+    })
+  })
+
+  it('stepped division multiply', async () => {
+    const v = wrapper.vm
+    v.numerical("2.5")
+    v.addOperand("*")
+    v.numerical("2.2")
+    v.equals()
+    v.numerical("2.5")
+    v.addOperand("*")
+    v.numerical("2.2")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("5.5")
+    })
+  })
+
+  it('stepped division', async () => {
+    const v = wrapper.vm
+    v.numerical("8")
+    v.addOperand("/")
+    v.numerical("4")
+    v.equals()
+    v.numerical("8")
+    v.addOperand("/")
+    v.numerical("4")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("2")
+    })
+  })
+
+  it('stepped decimal division', async () => {
+    const v = wrapper.vm
+    v.numerical("2.5")
+    v.addOperand("/")
+    v.numerical("2.2")
+    v.equals()
+    v.numerical("2.5")
+    v.addOperand("/")
+    v.numerical("2.2")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("1.13636364")
+    })
+  })
+
+  it('continous all', async () => {
+    const v = wrapper.vm
+    v.numerical("8")
+    v.addOperand("+")
+    v.numerical("8")
+    v.addOperand("-")
+    v.numerical("8")
+    v.addOperand("*")
+    v.numerical("8")
+    v.addOperand("/")
+    v.numerical("8")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("8")
+    })
+  })
+
+  it('continous division all', async () => {
+    const v = wrapper.vm
+    v.numerical("2.5")
+    v.addOperand("+")
+    v.numerical("2.2")
+    v.addOperand("-")
+    v.numerical("2.5")
+    v.addOperand("*")
+    v.numerical("2.2")
+    v.addOperand("/")
+    v.numerical("2.5")
+    v.equals()
+    v.$nextTick().then(() => {
+      //expect(output.text()).toMatch("2.5") diff result on ios calculator. maybe bodmas?
+      expect(output.text()).toMatch("1.936")
+    })
+  })
+
+  it('stepped all', async () => {
+    const v = wrapper.vm
+    v.numerical("8")
+    v.addOperand("+")
+    v.numerical("8")
+    v.equals()
+    v.numerical("8")
+    v.addOperand("-")
+    v.numerical("8")
+    v.equals()
+    v.numerical("8")
+    v.addOperand("*")
+    v.numerical("8")
+    v.equals()
+    v.numerical("8")
+    v.addOperand("/")
+    v.numerical("8")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("1")
+    })
+  })
+
+  it('stepped decimal all', async () => {
+    const v = wrapper.vm
+    v.numerical("2.5")
+    v.addOperand("+")
+    v.numerical("2.2")
+    v.equals()
+    v.numerical("2.5")
+    v.addOperand("-")
+    v.numerical("2.2")
+    v.equals()
+    v.numerical("2.5")
+    v.addOperand("*")
+    v.numerical("2.2")
+    v.equals()
+    v.numerical("2.5")
+    v.addOperand("/")
+    v.numerical("2.2")
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("1.13636364")
+    })
+  })
+
+  it('stepped all PI', async () => {
+    const v = wrapper.vm
+    v.pi()
+    v.addOperand("+")
+    v.pi()
+    v.equals()
+    v.pi()
+    v.addOperand("-")
+    v.pi()
+    v.equals()
+    v.pi()
+    v.addOperand("*")
+    v.pi()
+    v.equals()
+    v.pi()
+    v.addOperand("/")
+    v.pi()
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("1")
+    })
+  })
+
+  it('continous all PI', async () => {
+    const v = wrapper.vm
+    v.pi()
+    v.addOperand("+")
+    v.pi()
+    v.addOperand("-")
+    v.pi()
+    v.addOperand("*")
+    v.pi()
+    v.addOperand("/")
+    v.pi()
+    v.equals()
+    v.$nextTick().then(() => {
+      expect(output.text()).toMatch("3.14159265")
+    })
+  })
 
 })
